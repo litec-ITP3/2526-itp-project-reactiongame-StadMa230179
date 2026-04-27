@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pro Reaction Tester</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --card-bg: #1e293b;
+        --p1-color: #2ecc71;
+        --p2-color: #e74c3c;
+        --accent: #3498db;
+      }
+
+      body {
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        text-align: center;
+        background: var(--bg);
+        color: #f8fafc;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 30px;
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        letter-spacing: -1px;
+        background: linear-gradient(to right, #3498db, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 5px;
+      }
+
+      #status {
+        color: #94a3b8;
+        font-style: italic;
+        margin-bottom: 20px;
+      }
+
+      .action-area {
+        margin-bottom: 40px;
+      }
+
+      .score-board {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        margin-bottom: 40px;
+      }
+
+      .card {
+        flex: 1;
+        padding: 30px;
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+        position: relative;
+      }
+
+      .p1 {
+        background: rgba(46, 204, 113, 0.05);
+        border: 2px solid var(--p1-color);
+        box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+      }
+
+      .p2 {
+        background: rgba(231, 76, 60, 0.05);
+        border: 2px solid var(--p2-color);
+        box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
+      }
+
+      .card h2 {
+        margin-top: 0;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #cbd5e1;
+      }
+
+      .time {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-top: 10px;
+        font-family: "Courier New", monospace;
+      }
+
+      button {
+        padding: 15px 35px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        transition: all 0.2s;
+        box-shadow: 0 4px 14px rgba(52, 152, 219, 0.4);
+        text-transform: uppercase;
+      }
+
+      button:hover {
+        background: #2980b9;
+        transform: scale(1.05);
+      }
+
+      .history-container {
+        margin-top: 50px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 30px;
+      }
+
+      .history-table {
+        margin: 0 auto;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+        width: 100%;
+        max-width: 500px;
+      }
+
+      .history-table td {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        font-size: 1.1rem;
+      }
+
+      .history-table td:first-child {
+        border-radius: 10px 0 0 10px;
+        color: #64748b;
+      }
+      .history-table td:last-child {
+        border-radius: 0 10px 10px 0;
+      }
+
+      .history-p1 {
+        color: var(--p1-color);
+        font-weight: bold;
+      }
+      .history-p2 {
+        color: var(--p2-color);
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>REACTION MASTER</h1>
+      <p id="status">Bereit für das nächste Duell?</p>
+
+      <div class="action-area">
+        <button id="connectBtn">🔌 Arduino verbinden</button>
+      </div>
+
+      <div class="score-board">
+        <div class="card p1">
+          <h2>SPIELER 1</h2>
+          <div id="timeP1" class="time">--</div>
+        </div>
+        <div class="card p2">
+          <h2>SPIELER 2</h2>
+          <div id="timeP2" class="time">--</div>
+        </div>
+      </div>
+
+      <div class="history-container">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th
+                style="color: #64748b; font-size: 0.8rem; padding-bottom: 10px"
+              >
+                Runde
+              </th>
+              <th
+                style="color: #64748b; font-size: 0.8rem; padding-bottom: 10px"
+              >
+                Player 1
+              </th>
+              <th
+                style="color: #64748b; font-size: 0.8rem; padding-bottom: 10px"
+              >
+                Player 2
+              </th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr>
+              <td>#1</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>#2</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>#3</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      let port;
+      let history = [];
+
+      document
+        .getElementById("connectBtn")
+        .addEventListener("click", async () => {
+          try {
+            port = await navigator.serial.requestPort();
+            await port.open({ baudRate: 9600 });
+            document.getElementById("status").innerText = "System online ✅";
+            document.getElementById("connectBtn").style.display = "none";
+
+            const textDecoder = new TextDecoderStream();
+            port.readable.pipeTo(textDecoder.writable);
+            const reader = textDecoder.readable
+              .pipeThrough(new TransformStream(new LineBreakTransformer()))
+              .getReader();
+
+            while (true) {
+              const { value, done } = await reader.read();
+              if (done) break;
+              if (value) processData(value);
+            }
+          } catch (error) {
+            alert("Fehler bei der Verbindung.");
+          }
+        });
+
+      class LineBreakTransformer {
+        constructor() {
+          this.chunks = "";
+        }
+        transform(chunk, controller) {
+          this.chunks += chunk;
+          const lines = this.chunks.split("\r\n");
+          this.chunks = lines.pop();
+          lines.forEach((line) => controller.enqueue(line));
+        }
+        flush(controller) {
+          controller.enqueue(this.chunks);
+        }
+      }
+
+      function updateHistoryTable(p1, p2) {
+        history.unshift({ p1, p2 });
+        if (history.length > 3) history.pop();
+        const tbody = document.getElementById("historyBody");
+        tbody.innerHTML = "";
+        history.forEach((entry, index) => {
+          tbody.innerHTML += `<tr>
+                    <td>#${index + 1}</td>
+                    <td class="history-p1">${entry.p1} ms</td>
+                    <td class="history-p2">${entry.p2} ms</td>
+                </tr>`;
+        });
+      }
+
+      function processData(line) {
+        const data = line.trim();
+        if (data === "START") {
+          document.getElementById("timeP1").innerText = "--";
+          document.getElementById("timeP2").innerText = "--";
+          document.getElementById("status").innerText = "Warte auf Reaktion...";
+        }
+        if (data.startsWith("P1:"))
+          document.getElementById("timeP1").innerText = data.split(":")[1];
+        if (data.startsWith("P2:"))
+          document.getElementById("timeP2").innerText = data.split(":")[1];
+        if (data === "ENDE") {
+          document.getElementById("status").innerText = "Runde beendet!";
+          const f1 = document.getElementById("timeP1").innerText;
+          const f2 = document.getElementById("timeP2").innerText;
+          if (f1 !== "--" && f2 !== "--") updateHistoryTable(f1, f2);
+        }
+      }
+    </script>
+  </body>
+</html>
